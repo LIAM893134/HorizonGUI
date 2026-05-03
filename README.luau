@@ -1,3 +1,9 @@
+-- made by vyxonq, modified by halis and aibmpk
+
+-- https://discord.gg/Q2wggVjp
+
+
+
 -- load libary
 
 local HorizonUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/LIAM893134/HorizonGUI/refs/heads/main/HorizonLibary.luau"))()
