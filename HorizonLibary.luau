@@ -1,3 +1,4 @@
+-- Horizon UI Full Merged v1.2.0
 local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -21,14 +22,7 @@ local Themes = {
 	{name="Ocean",accent1=Color3.fromRGB(56,189,248),accent2=Color3.fromRGB(99,102,241),background=Color3.fromRGB(7,12,18),sidebar=Color3.fromRGB(10,16,24),text=Color3.fromRGB(230,245,255),subtext=Color3.fromRGB(120,160,190),stroke=Color3.fromRGB(30,70,110),elementBg=Color3.fromRGB(14,22,34),toggleOff=Color3.fromRGB(35,60,85),trackBg=Color3.fromRGB(30,55,80)},
 	{name="Gold",accent1=Color3.fromRGB(251,191,36),accent2=Color3.fromRGB(245,158,11),background=Color3.fromRGB(13,11,6),sidebar=Color3.fromRGB(18,15,8),text=Color3.fromRGB(255,250,235),subtext=Color3.fromRGB(180,165,120),stroke=Color3.fromRGB(90,70,20),elementBg=Color3.fromRGB(22,18,10),toggleOff=Color3.fromRGB(65,55,25),trackBg=Color3.fromRGB(58,48,22)},
 	{name="Sakura",accent1=Color3.fromRGB(236,72,153),accent2=Color3.fromRGB(168,85,247),background=Color3.fromRGB(12,8,14),sidebar=Color3.fromRGB(17,11,19),text=Color3.fromRGB(255,240,255),subtext=Color3.fromRGB(190,155,210),stroke=Color3.fromRGB(90,40,110),elementBg=Color3.fromRGB(22,14,26),toggleOff=Color3.fromRGB(68,40,80),trackBg=Color3.fromRGB(60,35,72)},
-    {name="Mint",accent1=Color3.fromRGB(52,211,153),accent2=Color3.fromRGB(34,197,94),background=Color3.fromRGB(7,12,14),sidebar=Color3.fromRGB(10,16,20),text=Color3.fromRGB(230,255,245),subtext=Color3.fromRGB(120,190,160),stroke=Color3.fromRGB(30,80,60),elementBg=Color3.fromRGB(14,22,28),toggleOff=Color3.fromRGB(35,60,50),trackBg=Color3.fromRGB(30,55,45)},
-    {name="Amethyst",accent1=Color3.fromRGB(163,63,255),accent2=Color3.fromRGB(168,85,247),background=Color3.fromRGB(12,7,14),sidebar=Color3.fromRGB(17,10,19),text=Color3.fromRGB(255,240,255),subtext=Color3.fromRGB(180,140,190),stroke=Color3.fromRGB(80,30,110),elementBg=Color3.fromRGB(22,13,26),toggleOff=Color3.fromRGB(65,35,80),trackBg=Color3.fromRGB(55,30,72)},
-    {name="Custom",accent1=Color3.fromRGB(255,0,0),accent2=Color3.fromRGB(0,255,0),background=Color3.fromRGB(0,0,0),sidebar=Color3.fromRGB(255,255,255),text=Color3.fromRGB(255,255,255),subtext=Color3.fromRGB(128,128,128),stroke=Color3.fromRGB(255,255,255),elementBg=Color3.fromRGB(64,64,64),toggleOff=Color3.fromRGB(128,128,128),trackBg=Color3.fromRGB(192,192,192)},
-    {name="Horizon Light",accent1=Color3.fromRGB(99,102,241),accent2=Color3.fromRGB(168,85,247),background=Color3.fromRGB(255,255,255),sidebar=Color3.fromRGB(245,245,250),text=Color3.fromRGB(20,20,30),subtext=Color3.fromRGB(100,100,120),stroke=Color3.fromRGB(200,200,255),elementBg=Color3.fromRGB(255,255,255),toggleOff=Color3.fromRGB(220,220,230),trackBg=Color3.fromRGB(235,235,245)},
-    {name = "Dark Matter", accent1 = Color3.fromRGB(255, 0, 255), accent2 = Color3.fromRGB(0, 255, 255), background = Color3.fromRGB(10, 10, 10), sidebar = Color3.fromRGB(20, 20, 20), text = Color3.fromRGB(200, 200, 200), subtext = Color3.fromRGB(120, 120, 120), stroke = Color3.fromRGB(255, 0, 255), elementBg = Color3.fromRGB(30, 30, 30), toggleOff = Color3.fromRGB(50, 50, 50), trackBg = Color3.fromRGB(40, 40, 40)},
-    {name = "Blueberry", accent1 = Color3.fromRGB(0, 255, 255), accent2 = Color3.fromRGB(0, 128, 255), background = Color3.fromRGB(15, 15, 30), sidebar = Color3.fromRGB(25, 25, 50), text = Color3.fromRGB(220, 240, 255), subtext = Color3.fromRGB(120, 160, 190), stroke = Color3.fromRGB(0, 128, 255), elementBg = Color3.fromRGB(20, 20, 40), toggleOff = Color3.fromRGB(40, 40, 70), trackBg = Color3.fromRGB(30, 30, 60)},
 }
-
 
 local Icons = {
 	close="rbxassetid://10747384394",minimize="rbxassetid://10734896206",
@@ -66,11 +60,15 @@ end
 local HorizonUI = {}; HorizonUI.__index = HorizonUI
 local Tab = {}; Tab.__index = Tab
 local Section = {}; Section.__index = Section
-local _state = {themeIndex=1}
+
+local _state = {themeIndex=1, bgTransparency=0.06}
 
 function HorizonUI.new(title)
 	local self = setmetatable({}, HorizonUI)
 	self.title       = title or "Horizon"
+	self.version     = "1.2.0"
+	self.discord     = "https://discord.gg/yourlink"
+	
 	self.player      = Players.LocalPlayer
 	self.playerGui   = self.player:WaitForChild("PlayerGui")
 	self.tabs        = {}
@@ -89,6 +87,168 @@ end
 function HorizonUI:_theme() return Themes[_state.themeIndex] end
 function HorizonUI:_regTheme(element, kind, extra)
 	table.insert(self._themeReg, {element=element, kind=kind, extra=extra})
+end
+
+
+function HorizonUI:SetAccentColor(color)
+	local theme = self:_theme()
+	theme.accent1 = color
+	theme.accent2 = color:lerp(Color3.fromRGB(255,255,255), 0.25)
+	self:_applyTheme(_state.themeIndex)
+end
+
+
+function HorizonUI:AddColorPicker(name, default, callback)
+	local sec = self.activeTab.sections[1] or self.activeTab:AddSection("")
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.new(1,0,0,s(125))
+	frame.BackgroundTransparency = 1
+	frame.Parent = sec._elems
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1,-s(20),0,s(20))
+	lbl.Position = UDim2.new(0,s(12),0,0)
+	lbl.BackgroundTransparency = 1
+	lbl.Text = name
+	lbl.TextColor3 = self:_theme().text
+	lbl.TextSize = TS
+	lbl.Font = Enum.Font.GothamMedium
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.Parent = frame
+
+	local picker = Instance.new("ImageLabel")
+	picker.Size = UDim2.new(0,s(85),0,s(85))
+	picker.Position = UDim2.new(0,s(20),0,s(30))
+	picker.BackgroundTransparency = 1
+	picker.Image = "rbxassetid://415580125"
+	picker.Parent = frame
+
+	local thumb = Instance.new("Frame")
+	thumb.Size = UDim2.new(0,s(14),0,s(14))
+	thumb.BackgroundColor3 = Color3.new(1,1,1)
+	thumb.BorderSizePixel = 0
+	thumb.ZIndex = 10
+	thumb.Parent = picker
+	MakeCorner(thumb, s(7))
+	MakeStroke(thumb, Color3.new(0,0,0), 0.5, 2)
+
+	local preview = Instance.new("Frame")
+	preview.Size = UDim2.new(0,s(70),0,s(32))
+	preview.Position = UDim2.new(1,-s(90),0,s(55))
+	preview.BackgroundColor3 = default or Color3.fromRGB(99,102,241)
+	MakeCorner(preview, s(8))
+	preview.Parent = frame
+
+	local currentColor = default or Color3.fromRGB(99,102,241)
+	local dragging = false
+
+	picker.InputBegan:Connect(function(inp)
+		if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then dragging = true end
+	end)
+
+	UserInputService.InputChanged:Connect(function(inp)
+		if not dragging then return end
+		local center = picker.AbsolutePosition + picker.AbsoluteSize/2
+		local dir = Vector2.new(inp.Position.X, inp.Position.Y) - center
+		local radius = picker.AbsoluteSize.X / 2
+		local dist = math.min(dir.Magnitude, radius)
+		local angle = math.atan2(dir.Y, dir.X)
+
+		local h = (angle + math.pi) / (2 * math.pi)
+		currentColor = Color3.fromHSV(h, dist / radius, 1)
+
+		preview.BackgroundColor3 = currentColor
+		thumb.Position = UDim2.new(0.5, math.cos(angle) * dist * 0.82, 0.5, math.sin(angle) * dist * 0.82)
+
+		self:SetAccentColor(currentColor)
+		if callback then callback(currentColor) end
+	end)
+
+	UserInputService.InputEnded:Connect(function(inp)
+		if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then dragging = false end
+	end)
+end
+
+function HorizonUI:AddTransparencySlider(callback)
+	local sec = self.activeTab.sections[1] or self.activeTab:AddSection("")
+	sec:AddSlider("Background Transparency", 0, 100, _state.bgTransparency*100, function(val)
+		_state.bgTransparency = val/100
+		self.main.BackgroundTransparency = _state.bgTransparency
+		if callback then callback(_state.bgTransparency) end
+	end)
+end
+
+function HorizonUI:SaveConfig(name)
+	name = name or "Horizon_Config"
+	if not writefile then self:Notify("Config", "writefile not supported!", "error", 3) return end
+	local data = {
+		theme = _state.themeIndex,
+		accent = self:_theme().accent1,
+		bgTransparency = _state.bgTransparency
+	}
+	writefile(name..".json", game:GetService("HttpService"):JSONEncode(data))
+	self:Notify("Config Saved", name..".json", "success", 3)
+end
+
+function HorizonUI:LoadConfig(name)
+	name = name or "Horizon_Config"
+	if not readfile then self:Notify("Config", "readfile not supported!", "error", 3) return end
+	local ok, raw = pcall(readfile, name..".json")
+	if not ok then self:Notify("Config", "File not found", "warning", 3) return end
+	local ok2, data = pcall(function() return game:GetService("HttpService"):JSONDecode(raw) end)
+	if not ok2 then return end
+	if data.accent then self:SetAccentColor(data.accent) end
+	if data.bgTransparency then
+		_state.bgTransparency = data.bgTransparency
+		self.main.BackgroundTransparency = _state.bgTransparency
+	end
+	self:Notify("Config Loaded", name..".json", "success", 3)
+end
+
+function Tab:AddButton(...) return (self.sections[1] or self:AddSection("")).AddButton(...) end
+function Tab:AddToggle(...) return (self.sections[1] or self:AddSection("")).AddToggle(...) end
+function Tab:AddSlider(...) return (self.sections[1] or self:AddSection("")).AddSlider(...) end
+function Tab:AddDropdown(...) return (self.sections[1] or self:AddSection("")).AddDropdown(...) end
+function Tab:AddLabel(...) return (self.sections[1] or self:AddSection("")).AddLabel(...) end
+function Tab:AddInput(...) return (self.sections[1] or self:AddSection("")).AddInput(...) end
+
+
+function HorizonUI:_build()
+	local theme = self:_theme()
+	local W, H  = self._guiW, self._guiH
+
+	self.gui = Instance.new("ScreenGui")
+	self.gui.Name = "HorizonUI"; self.gui.ResetOnSpawn = false
+	self.gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling; self.gui.Parent = self.playerGui
+
+	self.main = Instance.new("Frame")
+	self.main.Name = "Main"; self.main.Size = UDim2.new(0,W,0,H)
+	self.main.Position = UDim2.new(0.5,-W/2,0.5,-H/2)
+	self.main.BackgroundColor3 = theme.background; self.main.BackgroundTransparency = _state.bgTransparency
+	self.main.BorderSizePixel = 0; self.main.Parent = self.gui
+	MakeCorner(self.main, s(18)); self.mainStroke = MakeStroke(self.main, theme.stroke, 0.45, 1)
+
+	self.titleBar = Instance.new("Frame")
+	self.titleBar.Name = "TitleBar"; self.titleBar.Size = UDim2.new(1,0,0,s(42))
+	self.titleBar.BackgroundTransparency = 1; self.titleBar.Parent = self.main
+
+	local sepLine = Instance.new("Frame")
+	sepLine.Size = UDim2.new(1,-s(40),0,1); sepLine.Position = UDim2.new(0,s(20),0,s(42))
+	sepLine.BorderSizePixel = 0; sepLine.BackgroundColor3 = Color3.fromRGB(255,255,255); sepLine.Parent = self.main
+	self._sepLine = sepLine; self._sepGrad = MakeGradient(sepLine, theme.accent1, theme.accent2, 0)
+
+	self._sepAnim = RunService.Heartbeat:Connect(function()
+		if self._sepGrad and self._sepGrad.Parent then self._sepGrad.Rotation = (self._sepGrad.Rotation+0.4)%360 end
+	end)
+
+	local topEdge = Instance.new("Frame")
+	topEdge.Size = UDim2.new(0.6,0,0,1); topEdge.Position = UDim2.new(0.2,0,0,0)
+	topEdge.BackgroundColor3 = Color3.fromRGB(255,255,255); topEdge.BackgroundTransparency = 0.55
+	topEdge.BorderSizePixel = 0; topEdge.Parent = self.main; MakeCorner(topEdge, 1)
+
+	self:_buildControls(); self:_buildSidebar(); self:_buildContent()
+	self:_buildMiniBar(); self:_buildResizeHandle(); self:_buildWatermark()
+	self:_setupDrag(); self:_setupHotkey(); self:_applyTheme(_state.themeIndex); self:_animateIn()
 end
 
 function HorizonUI:_build()
@@ -339,7 +499,7 @@ function HorizonUI:_buildSidebar()
 	end)
 	self._searchBox = searchBox
 
-	-- SCROLLING TAB CONTAINER
+
 	self.tabsContainer = Instance.new("ScrollingFrame")
 	self.tabsContainer.Name = "Tabs"
 	self.tabsContainer.Size = UDim2.new(1,-s(8),1,-s(230))
@@ -354,7 +514,7 @@ function HorizonUI:_buildSidebar()
 	self.tabsContainer.ClipsDescendants = true
 	self.tabsContainer.Parent = self.sidebar
 
-	-- UIListLayout for tabs
+	
 	local tabLayout = Instance.new("UIListLayout")
 	tabLayout.Name = "TabLayout"
 	tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
