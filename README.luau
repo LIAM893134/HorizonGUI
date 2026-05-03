@@ -1,3 +1,5 @@
+-- load libary
+
 local HorizonUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/LIAM893134/HorizonGUI/refs/heads/main/HorizonLibary.luau"))()
 
 
@@ -34,3 +36,6 @@ end)
 sec1:AddDropdown("Team", {"Red", "Blue", "Green"}, "Blue", function(choice)
 	print("Selected:", choice)
 end)
+
+-- create color picker
+sec1:AddColorPicker("pick a color", nil)
