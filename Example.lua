@@ -3,483 +3,1367 @@
 -- https://discord.gg/Q2wggVjp
 
 
-
--- load libary
-
-local HorizonUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/LIAM893134/HorizonGUI/refs/heads/main/HorizonLibary.luau"))()
-
-local ui = HorizonUI.new("Horizon Test")
-
-ui:SetWatermark(true)
-ui:SetStatus("🧪 Test Mode")
-
-local tab1 = ui:AddTab("Toggles & Sliders", nil, "HOT")
-local tab2 = ui:AddTab("Dropdowns", nil, "3")
-local tab3 = ui:AddTab("Input & Number", nil)
-local tab4 = ui:AddTab("Labels & Progress", nil)
-local tab5 = ui:AddTab("Buttons & Keys", nil)
-local tab6 = ui:AddTab("Toast Test", nil, "!")
-local tab7 = ui:AddTab("Config & Theme", nil)
-local tab8 = ui:AddTab("Misc & API", nil)
-
-task.wait(0.8)
-ui:Notify("HorizonUI", "Test script loaded! All elements ready.", "success", 4)
-
-local secTog1 = tab1:AddSection("Toggle Test")
-
-local togAimbot = secTog1:AddToggle("Aimbot", false, function(val)
-    print("[Toggle] Aimbot:", val)
-    ui:Notify("Aimbot", val and "Enabled" or "Disabled", val and "success" or "warning", 2)
-end)
-
-local togESP = secTog1:AddToggle("ESP (Default: On)", true, function(val)
-    print("[Toggle] ESP:", val)
-end)
-
-local togSpeed = secTog1:AddToggle("SpeedHack", false, function(val)
-    print("[Toggle] SpeedHack:", val)
-end)
-
-local togDisabled = secTog1:AddToggle("Disabled Toggle", false, function(val)
-    print("[Toggle] This should not fire!")
-end)
-togDisabled:setDisabled(true)
-
-task.delay(4, function()
-    togAimbot:setValue(true)
-    print("[API] togAimbot:setValue(true) called")
-end)
-
-task.delay(7, function()
-    togAimbot:setValue(false)
-    print("[API] togAimbot:setValue(false) called")
-end)
-
-local secSlider = tab1:AddSection("Slider Test")
-
-local sliderWalk = secSlider:AddSlider("WalkSpeed", 16, 500, 16, function(val)
-    print("[Slider] WalkSpeed:", val)
-    local plr = game:GetService("Players").LocalPlayer
-    if plr.Character and plr.Character:FindFirstChild("Humanoid") then
-        plr.Character.Humanoid.WalkSpeed = val
-    end
-end)
-
-local sliderJump = secSlider:AddSlider("JumpPower", 50, 500, 50, function(val)
-    print("[Slider] JumpPower:", val)
-    local plr = game:GetService("Players").LocalPlayer
-    if plr.Character and plr.Character:FindFirstChild("Humanoid") then
-        plr.Character.Humanoid.JumpPower = val
-    end
-end)
-
-local sliderFOV = secSlider:AddSlider("Field of View", 70, 120, 90, function(val)
-    print("[Slider] FOV:", val)
-    workspace.CurrentCamera.FieldOfView = val
-end)
-
-local sliderDis = secSlider:AddSlider("Disabled Slider", 0, 100, 50, function(val)
-    print("[Slider] Should not fire!")
-end)
-sliderDis:setDisabled(true)
-
-local secCollapse = tab1:AddSection("Collapsible Section Test")
-
-secCollapse:AddLabel("Click the section header to collapse and expand it.")
-secCollapse:AddToggle("Collapse Test Toggle", false, function(val)
-    print("[Collapse] Toggle:", val)
-end)
-secCollapse:AddSlider("Collapse Test Slider", 0, 100, 25, function(val)
-    print("[Collapse] Slider:", val)
-end)
-
-local secEmpty = tab1:AddSection("")
-
-secEmpty:AddLabel("This section has no header — different look.")
-
-local secDrop = tab2:AddSection("Standard Dropdown")
-
-local drop1 = secDrop:AddDropdown("Select Weapon", {
-    "Glock", "AK47", "AWP", "M4A1", "Desert Eagle", "UMP45", "MP5"
-}, "Glock", function(val)
-    print("[Dropdown] Weapon:", val)
-    ui:Notify("Weapon", val .. " selected", "info", 2)
-end)
-
-local drop2 = secDrop:AddDropdown("Game Mode", {
-    "Normal", "Hardcore", "Casual", "Ranked", "Custom"
-}, "Normal", function(val)
-    print("[Dropdown] Mode:", val)
-end)
-
-local secSearchDrop = tab2:AddSection("SearchableDropdown Test")
-
-local searchDrop = secSearchDrop:AddSearchableDropdown("Select Map", {
-    "Dust2", "Mirage", "Inferno", "Nuke", "Overpass",
-    "Vertigo", "Ancient", "Anubis", "Cache", "Train",
-    "Cobblestone", "Season", "Agency", "Office"
-}, "Dust2", function(val)
-    print("[SearchableDropdown] Map:", val)
-    ui:Notify("Map", val .. " selected!", "success", 2)
-end)
-
-local secMulti = tab2:AddSection("MultiSelect Dropdown Test")
-
-local multiDrop = secMulti:AddMultiDropdown("Active Features", {
-    "Aimbot", "ESP", "WallHack", "SpeedHack",
-    "BunnyHop", "TriggerBot", "NoRecoil", "AutoShoot"
-}, {"ESP", "WallHack"}, function(vals)
-    print("[MultiDropdown] Selected:", table.concat(vals, ", "))
-    ui:Notify("MultiSelect", #vals .. " features selected", "info", 2)
-end)
-
-secMulti:AddButton("Print Selected Values", function()
-    local vals = multiDrop:getValue()
-    print("[MultiDropdown] Currently selected:", table.concat(vals, ", "))
-    ui:Notify("Selected", table.concat(vals, " | "), "info", 3)
-end)
-
-local secInput = tab3:AddSection("Text Input Test")
-
-local input1 = secInput:AddInput("Player Name", "Enter username...", function(text)
-    print("[Input] Player Name:", text)
-    ui:Notify("Search", "Searching for '" .. text .. "'...", "info", 2)
-end)
-
-local input2 = secInput:AddInput("Custom Message", "Type your message...", function(text)
-    print("[Input] Message:", text)
-end)
-
-local input3 = secInput:AddInput("Webhook URL", "https://...", function(text)
-    print("[Input] URL:", text)
-end)
-
-task.delay(3, function()
-    input1:setValue("TestPlayer123")
-    print("[API] input1:setValue() called")
-end)
-
-local secNum = tab3:AddSection("NumberInput (+/- Buttons) Test")
-
-local num1 = secNum:AddNumberInput("Max Bullets", 1, 999, 30, 1, function(val)
-    print("[NumberInput] Bullets:", val)
-end)
-
-local num2 = secNum:AddNumberInput("Rate (%)", 0, 100, 50, 5, function(val)
-    print("[NumberInput] Rate:", val)
-    ui:Notify("Rate", "%" .. val .. " set", "info", 2)
-end)
-
-local num3 = secNum:AddNumberInput("Delay (ms)", 0, 2000, 100, 25, function(val)
-    print("[NumberInput] Delay:", val)
-end)
-
-local num4 = secNum:AddNumberInput("Disabled Input", 0, 100, 50, 1, function(val)
-    print("[NumberInput] Should not fire!")
-end)
-num4:setDisabled(true)
-
-task.delay(5, function()
-    num1:setValue(100)
-    print("[API] num1:setValue(100) called")
-end)
-
-local secLbl = tab4:AddSection("Label Test")
-
-local lbl1 = secLbl:AddLabel("This is a normal AddLabel text.")
-local lbl2 = secLbl:AddLabel("RichText: <b>Bold</b>, <i>Italic</i>, <font color='rgb(99,102,241)'>Colored</font>")
-
-task.delay(4, function()
-    lbl1:setText("Label updated! setText() API is working ✓")
-end)
-
-local secRich = tab4:AddSection("RichText / Paragraph Label Test")
-
-local richInfo    = secRich:AddRichLabel("This is an info message — info type display.", "info")
-local richSuccess = secRich:AddRichLabel("Operation completed successfully — success type.", "success")
-local richWarn    = secRich:AddRichLabel("Caution! This is a warning message — warning type.", "warning")
-local richError   = secRich:AddRichLabel("An error occurred! — error type display.", "error")
-local richPlain   = secRich:AddRichLabel("No type specified — plain paragraph text. Can be used for longer content.")
-
-task.delay(6, function()
-    richInfo:setText("RichLabel updated! setText() API is working ✓")
-end)
-
-local secProg = tab4:AddSection("ProgressBar Test")
-
-local progHP   = secProg:AddProgressBar("Health (HP)", 0, 100, 100)
-local progXP   = secProg:AddProgressBar("Experience (XP)", 0, 1000, 240)
-local progAmmo = secProg:AddProgressBar("Ammo", 0, 30, 30)
-local progLoad = secProg:AddProgressBar("Loading...", 0, 100, 0)
-
-task.spawn(function()
-    local v = 0
-    while progLoad and task.wait(0.07) do
-        v = (v + 1) % 101
-        progLoad:setValue(v)
-    end
-end)
-
-task.delay(3, function()
-    progHP:setValue(45)
-    ui:Notify("HP Dropped!", "Health: 45/100", "error", 3)
-end)
-
-task.delay(6, function()
-    progHP:setValue(100)
-    progAmmo:setValue(0)
-    ui:Notify("HP Restored!", "Health: 100/100", "success", 2)
-end)
-
-task.delay(8, function()
-    progXP:setValue(1000)
-    ui:Notify("Level Up!", "XP: 1000/1000 — Max level!", "success", 3)
-end)
-
-local secBtn = tab5:AddSection("Button Test")
-
-secBtn:AddButton("Teleport → Origin", function()
-    local plr = game:GetService("Players").LocalPlayer
-    if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-        plr.Character.HumanoidRootPart.CFrame = CFrame.new(0, 5, 0)
-    end
-    ui:Notify("Teleport", "Teleported to origin!", "success", 2)
-end)
-
-secBtn:AddButton("Print All getValue Results", function()
-    print("=== getValue RESULTS ===")
-    print("togAimbot:", togAimbot:getValue())
-    print("togESP:", togESP:getValue())
-    print("sliderWalk:", sliderWalk:getValue())
-    print("sliderFOV:", sliderFOV:getValue())
-    print("drop1:", drop1:getValue())
-    print("searchDrop:", searchDrop:getValue())
-    print("multiDrop:", table.concat(multiDrop:getValue(), ", "))
-    print("input1:", input1:getValue())
-    print("num1:", num1:getValue())
-    print("num2:", num2:getValue())
-    print("progHP:", progHP:getValue())
-    print("=======================")
-    ui:Notify("getValue", "All values printed to console!", "info", 3)
-end)
-
-local btnDis = secBtn:AddButton("Disabled Button", function()
-    print("[Button] This should not fire!")
-end)
-btnDis:setDisabled(true)
-
-secBtn:AddButton("Toggle Enable/Disable Cycle", function()
-    togDisabled:setDisabled(false)
-    ui:Notify("API", "Disabled toggle is now active!", "success", 2)
-    task.delay(3, function()
-        togDisabled:setDisabled(true)
-        ui:Notify("API", "Toggle disabled again!", "warning", 2)
-    end)
-end)
-
-local secKey = tab5:AddSection("Keybind Test")
-
-local kb1 = secKey:AddKeybind("Toggle ESP (Key)", Enum.KeyCode.F1, function(key)
-    print("[Keybind] Pressed:", key.Name)
-    ui:Notify("Keybind", key.Name .. " key pressed!", "info", 2)
-end)
-
-local kb2 = secKey:AddKeybind("Panic Key", Enum.KeyCode.Delete, function(key)
-    print("[Keybind] Panic:", key.Name)
-    ui:Notify("PANIC", "Exit key: " .. key.Name, "error", 3)
-end)
-
-local kb3 = secKey:AddKeybind("Teleport Key", Enum.KeyCode.F5, function(key)
-    local plr = game:GetService("Players").LocalPlayer
-    if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-        plr.Character.HumanoidRootPart.CFrame = CFrame.new(0, 5, 0)
-    end
-    ui:Notify("Teleport Key", "Teleported via " .. key.Name .. "!", "success", 2)
-end)
-
-secKey:AddButton("kb1 getValue", function()
-    print("[Keybind] kb1 value:", kb1:getValue().Name)
-    ui:Notify("Keybind getValue", kb1:getValue().Name, "info", 2)
-end)
-
-local secToast = tab6:AddSection("Toast Notify Types")
-
-secToast:AddButton("Info Toast", function()
-    ui:Notify("Information", "This is an info notification.", "info", 3)
-end)
-
-secToast:AddButton("Success Toast", function()
-    ui:Notify("Success", "Operation completed successfully!", "success", 3)
-end)
-
-secToast:AddButton("Warning Toast", function()
-    ui:Notify("Warning", "This is a warning message, be careful!", "warning", 3)
-end)
-
-secToast:AddButton("Error Toast", function()
-    ui:Notify("Error", "A critical error has occurred!", "error", 3)
-end)
-
-local secToastAdv = tab6:AddSection("Advanced Toast Tests")
-
-secToastAdv:AddButton("Long Duration (8s)", function()
-    ui:Notify("Long Toast", "This notification will stay on screen for 8 seconds.", "info", 8)
-end)
-
-secToastAdv:AddButton("Short Duration (1s)", function()
-    ui:Notify("Quick", "Very short!", "success", 1)
-end)
-
-secToastAdv:AddButton("Spam (5 Toasts At Once)", function()
-    ui:Notify("Toast 1", "First notification", "info", 3)
-    task.wait(0.15)
-    ui:Notify("Toast 2", "Second notification", "success", 3)
-    task.wait(0.15)
-    ui:Notify("Toast 3", "Third notification", "warning", 3)
-    task.wait(0.15)
-    ui:Notify("Toast 4", "Fourth notification", "error", 3)
-    task.wait(0.15)
-    ui:Notify("Toast 5", "Fifth notification", "info", 3)
-end)
-
-secToastAdv:AddButton("Long Message Toast", function()
-    ui:Notify("Detailed Notification", "This message is very long and tests the text wrapping behavior of the toast component.", "warning", 5)
-end)
-
-local secTheme = tab7:AddSection("Theme / ColorPicker Test")
-
-secTheme:AddColorPicker("Select Theme Color", function(idx, theme)
-    print("[ColorPicker] Theme:", theme.name, "Index:", idx)
-    ui:Notify("Theme Changed", theme.name .. " applied!", "success", 2)
-end)
-
-local secCfg = tab7:AddSection("Config Save / Load Test")
-
-secCfg:AddButton("Save Config ('testcfg')", function()
-    ui:SaveConfig("testcfg")
-end)
-
-secCfg:AddButton("Load Config ('testcfg')", function()
-    ui:LoadConfig("testcfg")
-end)
-
-secCfg:AddButton("Save As ('backup')", function()
-    ui:SaveConfig("backup")
-end)
-
-secCfg:AddButton("Load Non-Existent Config (Warning Test)", function()
-    ui:LoadConfig("nonexistent_file_xyz")
-end)
-
-local secWM = tab7:AddSection("Watermark / HUD Bar Test")
-
-local wmTog = secWM:AddToggle("Watermark Active", true, function(val)
-    ui:SetWatermark(val)
-end)
-
-secWM:AddButton("Custom Watermark Text", function()
-    ui:SetWatermark(true, "Horizon | Custom Text | v2.0")
-    wmTog:setValue(true)
-    ui:Notify("Watermark", "Custom text applied", "info", 2)
-end)
-
-secWM:AddButton("Default Watermark (FPS/Ping)", function()
-    ui:SetWatermark(true)
-    wmTog:setValue(true)
-    ui:Notify("Watermark", "FPS/Ping mode active", "success", 2)
-end)
-
-secWM:AddButton("Disable Watermark", function()
-    ui:SetWatermark(false)
-    wmTog:setValue(false)
-    ui:Notify("Watermark", "Disabled", "warning", 2)
-end)
-
-local secBadge = tab8:AddSection("Tab Badge Test")
-
-secBadge:AddButton("tab2 Badge → 'NEW'", function()
-    tab2:SetBadge("NEW")
-    ui:Notify("Badge", "tab2 badge set to 'NEW'", "success", 2)
-end)
-
-secBadge:AddButton("tab2 Badge → '99'", function()
-    tab2:SetBadge("99")
-    ui:Notify("Badge", "tab2 badge set to '99'", "info", 2)
-end)
-
-secBadge:AddButton("tab2 Badge Remove", function()
-    tab2:SetBadge(nil)
-    ui:Notify("Badge", "tab2 badge removed", "warning", 2)
-end)
-
-secBadge:AddButton("tab8 Badge → '🔥'", function()
-    tab8:SetBadge("🔥")
-    ui:Notify("Badge", "This tab badge updated", "success", 2)
-end)
-
-local secStatus = tab8:AddSection("SetStatus Test")
-
-secStatus:AddButton("Status: Online", function()
-    ui:SetStatus("🟢 Online")
-end)
-
-secStatus:AddButton("Status: Active", function()
-    ui:SetStatus("⚡ Active...")
-end)
-
-secStatus:AddButton("Status: AFK", function()
-    ui:SetStatus("💤 AFK")
-end)
-
-secStatus:AddButton("Status: Default (@username)", function()
-    local plr = game:GetService("Players").LocalPlayer
-    ui:SetStatus("@" .. plr.Name)
-end)
-
-local secGSearch = tab8:AddSection("Global Search Bar Test")
-
-secGSearch:AddLabel("Use the search box in the left sidebar.")
-secGSearch:AddRichLabel("Try typing 'toggle', 'slider', 'input', 'button'.", "info")
-secGSearch:AddRichLabel("Search filters elements in the currently active tab.", "warning")
-secGSearch:AddToggle("Search Test Toggle 1", false, function(val) print("Search1:", val) end)
-secGSearch:AddToggle("Search Test Toggle 2", false, function(val) print("Search2:", val) end)
-secGSearch:AddButton("Search Test Button", function() print("Search button clicked") end)
-secGSearch:AddSlider("Search Test Slider", 0, 100, 50, function(val) print("Search slider:", val) end)
-
-local secAPI = tab8:AddSection("Element Enable / Disable API Test")
-
-local apiToggle = secAPI:AddToggle("API Test Toggle", false, function(val)
-    print("[API Toggle]:", val)
-end)
-
-local apiSlider = secAPI:AddSlider("API Test Slider", 0, 100, 50, function(val)
-    print("[API Slider]:", val)
-end)
-
-local apiInput = secAPI:AddInput("API Test Input", "Type here...", function(text)
-    print("[API Input]:", text)
-end)
-
-secAPI:AddButton("Disable All", function()
-    apiToggle:setDisabled(true)
-    apiSlider:setDisabled(true)
-    apiInput:setDisabled(true)
-    ui:Notify("Disabled", "Toggle, Slider, Input disabled!", "warning", 3)
-end)
-
-secAPI:AddButton("Enable All", function()
-    apiToggle:setDisabled(false)
-    apiSlider:setDisabled(false)
-    apiInput:setDisabled(false)
-    ui:Notify("Enabled", "Toggle, Slider, Input re-enabled!", "success", 3)
-end)
-
-local secHotkey = tab8:AddSection("Hotkeys & UI Controls")
-
-secHotkey:AddRichLabel("INSERT → Hide / Show UI", "info")
-secHotkey:AddRichLabel("Minimize button (—) → Pill / compact mode", "info")
-secHotkey:AddRichLabel("Resize grip (bottom-right corner) → Resize window", "info")
-secHotkey:AddRichLabel("Close button (X) → Opens confirmation dialog", "warning")
-
-print("[HorizonUI Test] All elements loaded successfully!")
-print("[HorizonUI Test] Tabs: 8 | Sections: 30+ | Elements: 60+")
+-- this is an gui near the same like windui, the code of gui not same, but the example is the same.
+
+
+local RunService = game:GetService("RunService")
+
+local cloneref = (cloneref or clonereference or function(instance)
+	return instance
+end)
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+local HttpService = cloneref(game:GetService("HttpService"))
+
+local WindUI
+
+do
+	local ok, result = pcall(function()
+		return require("./src/Init")
+	end)
+
+	if ok then
+		WindUI = result
+	else
+		if cloneref(game:GetService("RunService")):IsStudio() then
+			WindUI = require(cloneref(ReplicatedStorage:WaitForChild("WindUI"):WaitForChild("Init")))
+		else
+			WindUI =
+				loadstring(game:HttpGet("https://raw.githubusercontent.com/LIAM893134/HorizonGUI/refs/heads/main/HorizonLibary.luau"))()
+		end
+	end
+end
+
+--[[
+
+WindUI.Creator.AddIcons("solar", {
+    ["CheckSquareBold"] = "rbxassetid://132438947521974",
+    ["CursorSquareBold"] = "rbxassetid://120306472146156",
+    ["FileTextBold"] = "rbxassetid://89294979831077",
+    ["FolderWithFilesBold"] = "rbxassetid://74631950400584",
+    ["HamburgerMenuBold"] = "rbxassetid://134384554225463",
+    ["Home2Bold"] = "rbxassetid://92190299966310",
+    ["InfoSquareBold"] = "rbxassetid://119096461016615",
+    ["PasswordMinimalisticInputBold"] = "rbxassetid://109919668957167",
+    ["SolarSquareTransferHorizontalBold"] = "rbxassetid://125444491429160",
+})--]]
+
+function createPopup()
+	return WindUI:Popup({
+		Title = "Welcome to the WindUI!",
+		Icon = "bird",
+		Content = "Hello!",
+		Buttons = {
+			{
+				Title = "Hahaha",
+				Icon = "bird",
+				Variant = "Tertiary",
+			},
+			{
+				Title = "Hahaha",
+				Icon = "bird",
+				Variant = "Tertiary",
+			},
+			{
+				Title = "Hahaha",
+				Icon = "bird",
+				Variant = "Tertiary",
+			},
+		},
+	})
+end
+
+-- */  Window  /* --
+local Window = WindUI:CreateWindow({
+	Title = ".ftgs hub  |  WindUI Example",
+	--Author = "by .ftgs • Footagesus",
+	Folder = "ftgshub",
+	Icon = "solar:folder-2-bold-duotone",
+	--Theme = "Mellowsi",
+	--IconSize = 22*2,
+	NewElements = true,
+	--Size = UDim2.fromOffset(700,700),
+
+	HideSearchBar = false,
+
+	OpenButton = {
+		Title = "Open .ftgs hub UI", -- can be changed
+		CornerRadius = UDim.new(1, 0), -- fully rounded
+		StrokeThickness = 3, -- removing outline
+		Enabled = true, -- enable or disable openbutton
+		Draggable = true,
+		OnlyMobile = false,
+		Scale = 0.5,
+
+		Color = ColorSequence.new( -- gradient
+			Color3.fromHex("#30FF6A"),
+			Color3.fromHex("#e7ff2f")
+		),
+	},
+	Topbar = {
+		Height = 44,
+		ButtonsType = "Mac", -- Default or Mac
+	},
+})
+
+--createPopup()
+
+--Window:SetUIScale(.8)
+
+-- */  Tags  /* --
+do
+	Window:Tag({
+		Title = "v" .. WindUI.Version,
+		Icon = "github",
+		Color = Color3.fromHex("#1c1c1c"),
+		Border = true,
+	})
+end
+
+-- */  Colors  /* --
+local Purple = Color3.fromHex("#7775F2")
+local Yellow = Color3.fromHex("#ECA201")
+local Green = Color3.fromHex("#10C550")
+local Grey = Color3.fromHex("#83889E")
+local Blue = Color3.fromHex("#257AF7")
+local Red = Color3.fromHex("#EF4F1D")
+
+-- */ Other Functions /* --
+local function parseJSON(luau_table, indent, level, visited)
+	indent = indent or 2
+	level = level or 0
+	visited = visited or {}
+
+	local currentIndent = string.rep(" ", level * indent)
+	local nextIndent = string.rep(" ", (level + 1) * indent)
+
+	if luau_table == nil then
+		return "null"
+	end
+
+	local dataType = type(luau_table)
+
+	if dataType == "table" then
+		if visited[luau_table] then
+			return '"[Circular Reference]"'
+		end
+
+		visited[luau_table] = true
+
+		local isArray = true
+		local maxIndex = 0
+
+		for k, _ in pairs(luau_table) do
+			if type(k) == "number" and k > maxIndex then
+				maxIndex = k
+			end
+			if type(k) ~= "number" or k <= 0 or math.floor(k) ~= k then
+				isArray = false
+				break
+			end
+		end
+
+		local count = 0
+		for _ in pairs(luau_table) do
+			count = count + 1
+		end
+		if count ~= maxIndex and isArray then
+			isArray = false
+		end
+
+		if count == 0 then
+			return "{}"
+		end
+
+		if isArray then
+			if count == 0 then
+				return "[]"
+			end
+
+			local result = "[\n"
+
+			for i = 1, maxIndex do
+				result = result .. nextIndent .. parseJSON(luau_table[i], indent, level + 1, visited)
+				if i < maxIndex then
+					result = result .. ","
+				end
+				result = result .. "\n"
+			end
+
+			result = result .. currentIndent .. "]"
+			return result
+		else
+			local result = "{\n"
+			local first = true
+
+			local keys = {}
+			for k in pairs(luau_table) do
+				table.insert(keys, k)
+			end
+			table.sort(keys, function(a, b)
+				if type(a) == type(b) then
+					return tostring(a) < tostring(b)
+				else
+					return type(a) < type(b)
+				end
+			end)
+
+			for _, k in ipairs(keys) do
+				local v = luau_table[k]
+				if not first then
+					result = result .. ",\n"
+				else
+					first = false
+				end
+
+				if type(k) == "string" then
+					result = result .. nextIndent .. '"' .. k .. '": '
+				else
+					result = result .. nextIndent .. '"' .. tostring(k) .. '": '
+				end
+
+				result = result .. parseJSON(v, indent, level + 1, visited)
+			end
+
+			result = result .. "\n" .. currentIndent .. "}"
+			return result
+		end
+	elseif dataType == "string" then
+		local escaped = luau_table:gsub("\\", "\\\\")
+		escaped = escaped:gsub('"', '\\"')
+		escaped = escaped:gsub("\n", "\\n")
+		escaped = escaped:gsub("\r", "\\r")
+		escaped = escaped:gsub("\t", "\\t")
+
+		return '"' .. escaped .. '"'
+	elseif dataType == "number" then
+		return tostring(luau_table)
+	elseif dataType == "boolean" then
+		return luau_table and "true" or "false"
+	elseif dataType == "function" then
+		return '"function"'
+	else
+		return '"' .. dataType .. '"'
+	end
+end
+
+local function tableToClipboard(luau_table, indent)
+	indent = indent or 4
+	local jsonString = parseJSON(luau_table, indent)
+	setclipboard(jsonString)
+	return jsonString
+end
+
+-- */  About Tab  /* --
+do
+	local AboutTab = Window:Tab({
+		Title = "About WindUI",
+		Desc = "Description Example",
+		Icon = "solar:info-square-bold",
+		IconColor = Grey,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	local AboutSection = AboutTab:Section({
+		Title = "About WindUI",
+	})
+
+	AboutSection:Image({
+		Image = "https://repository-images.githubusercontent.com/880118829/22c020eb-d1b1-4b34-ac4d-e33fd88db38d",
+		AspectRatio = "16:9",
+		Radius = 9,
+	})
+
+	AboutSection:Space({ Columns = 3 })
+
+	AboutSection:Section({
+		Title = "What is WindUI?",
+		TextSize = 24,
+		FontWeight = Enum.FontWeight.SemiBold,
+	})
+
+	AboutSection:Space()
+
+	AboutSection:Section({
+		Title = "WindUI is a stylish, open-source UI (User Interface) library specifically designed for Roblox Script Hubs.\nDeveloped by Footagesus (.ftgs, Footages).\nIt aims to provide developers with a modern, customizable, and easy-to-use toolkit for creating visually appealing interfaces within Roblox.\nThe project is primarily written in Lua (Luau), the scripting language used in Roblox.",
+		TextSize = 18,
+		TextTransparency = 0.35,
+		FontWeight = Enum.FontWeight.Medium,
+	})
+
+	AboutTab:Space({ Columns = 4 })
+
+	-- Default buttons
+
+	AboutTab:Button({
+		Title = "Export WindUI JSON (copy)",
+		Color = Color3.fromHex("#a2ff30"),
+		Justify = "Center",
+		IconAlign = "Left",
+		Icon = "", -- removing icon
+		Callback = function()
+			tableToClipboard(WindUI)
+			WindUI:Notify({
+				Title = "WindUI JSON",
+				Content = "Copied to Clipboard!",
+			})
+		end,
+	})
+	AboutTab:Space({ Columns = 1 })
+
+	AboutTab:Button({
+		Title = "Destroy Window",
+		Color = Color3.fromHex("#ff4830"),
+		Justify = "Center",
+		Icon = "shredder",
+		IconAlign = "Left",
+		Callback = function()
+			Window:Destroy()
+		end,
+	})
+end
+
+-- */  Elements Section  /* --
+local ElementsSection = Window:Section({
+	Title = "Elements",
+})
+local ConfigUsageSection = Window:Section({
+	Title = "Config Usage",
+})
+local OtherSection = Window:Section({
+	Title = "Other",
+})
+
+-- */  Overview Tab  /* --
+do
+	local OverviewTab = ElementsSection:Tab({
+		Title = "Overview",
+		Icon = "solar:home-2-bold",
+		IconColor = Grey,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	local OverviewSection1 = OverviewTab:Section({
+		Title = "Group's Example",
+	})
+
+	local OverviewGroup1 = OverviewTab:Group({})
+
+	OverviewGroup1:Button({
+		Title = "Button 1",
+		Justify = "Center",
+		Icon = "",
+		Callback = function()
+			print("clicked button 1")
+		end,
+	})
+	OverviewGroup1:Space()
+	OverviewGroup1:Button({
+		Title = "Button 2",
+		Justify = "Center",
+		Icon = "",
+		Callback = function()
+			print("clicked button 2")
+		end,
+	})
+
+	OverviewTab:Space()
+
+	local OverviewGroup2 = OverviewTab:Group({})
+
+	OverviewGroup2:Button({
+		Title = "Button 1",
+		Justify = "Center",
+		Icon = "",
+		Callback = function()
+			print("clicked button 1")
+		end,
+	})
+	OverviewGroup2:Space()
+	OverviewGroup2:Toggle({
+		Title = "Toggle 2",
+		Callback = function(v)
+			print("clicked toggle 2:", v)
+		end,
+	})
+	OverviewGroup2:Space()
+	OverviewGroup2:Colorpicker({
+		Title = "Colorpicker 3",
+		Default = Color3.fromHex("#30ff6a"),
+		Callback = function(color)
+			print(color)
+		end,
+	})
+
+	OverviewTab:Space()
+
+	local OverviewGroup3 = OverviewTab:Group({})
+
+	local OverviewSection1 = OverviewGroup3:Section({
+		Title = "Section 1",
+		Desc = "Section exampleee",
+		Box = true,
+		BoxBorder = true,
+		Opened = true,
+	})
+	OverviewSection1:Button({
+		Title = "Button 1",
+		Justify = "Center",
+		Icon = "",
+		Callback = function()
+			print("clicked button 1")
+		end,
+	})
+	OverviewSection1:Space()
+	OverviewSection1:Toggle({
+		Title = "Toggle 2",
+		Callback = function(v)
+			print("clicked toggle 2:", v)
+		end,
+	})
+
+	OverviewGroup3:Space()
+
+	local OverviewSection2 = OverviewGroup3:Section({
+		Title = "Section 2",
+		Box = true,
+		BoxBorder = true,
+		Opened = true,
+	})
+	OverviewSection2:Button({
+		Title = "Button 1",
+		Justify = "Center",
+		Icon = "",
+		Callback = function()
+			print("clicked button 1")
+		end,
+	})
+	OverviewSection2:Space()
+	OverviewSection2:Button({
+		Title = "Button 2",
+		Justify = "Center",
+		Icon = "",
+		Callback = function()
+			print("clicked button 2")
+		end,
+	})
+
+	--OverviewTab:Space()
+end
+
+-- */  Toggle Tab  /* --
+do
+	local ToggleTab = ElementsSection:Tab({
+		Title = "Toggle",
+		Icon = "solar:check-square-bold",
+		IconColor = Green,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	ToggleTab:Toggle({
+		Title = "Toggle",
+	})
+
+	ToggleTab:Space()
+
+	ToggleTab:Toggle({
+		Title = "Toggle",
+		Desc = "Toggle example",
+	})
+
+	ToggleTab:Space()
+
+	local ToggleGroup1 = ToggleTab:Group()
+	ToggleGroup1:Toggle({})
+	ToggleGroup1:Space()
+	ToggleGroup1:Toggle({})
+
+	ToggleTab:Space()
+
+	ToggleTab:Toggle({
+		Title = "Checkbox",
+		Type = "Checkbox",
+	})
+
+	ToggleTab:Space()
+
+	ToggleTab:Toggle({
+		Title = "Checkbox",
+		Desc = "Checkbox example",
+		Type = "Checkbox",
+	})
+
+	ToggleTab:Space()
+
+	ToggleTab:Toggle({
+		Title = "Toggle",
+		Locked = true,
+		LockedTitle = "This element is locked",
+	})
+
+	ToggleTab:Toggle({
+		Title = "Toggle",
+		Desc = "Toggle example",
+		Locked = true,
+		LockedTitle = "This element is locked",
+	})
+end
+
+-- */  Button Tab  /* --
+do
+	local ButtonTab = ElementsSection:Tab({
+		Title = "Button",
+		Icon = "solar:cursor-square-bold",
+		IconColor = Blue,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	local HighlightButton
+	HighlightButton = ButtonTab:Button({
+		Title = "Highlight Button",
+		Icon = "mouse",
+		Callback = function()
+			print("clicked highlight")
+			HighlightButton:Highlight()
+		end,
+	})
+
+	ButtonTab:Space()
+
+	ButtonTab:Button({
+		Title = "Blue Button",
+		Color = Color3.fromHex("#305dff"),
+		Icon = "",
+		Callback = function() end,
+	})
+
+	ButtonTab:Space()
+
+	ButtonTab:Button({
+		Title = "Blue Button",
+		Desc = "With description",
+		Color = Color3.fromHex("#305dff"),
+		Icon = "",
+		Callback = function() end,
+	})
+
+	ButtonTab:Space()
+
+	ButtonTab:Button({
+		Title = "Notify Button",
+		--Desc = "Button example",
+		Callback = function()
+			WindUI:Notify({
+				Title = "Hello",
+				Content = "Welcome to the WindUI Example!",
+				Icon = "solar:bell-bold",
+				Duration = 5,
+				CanClose = false,
+			})
+		end,
+	})
+
+	ButtonTab:Button({
+		Title = "Notify Button 2",
+		--Desc = "Button example",
+		Callback = function()
+			WindUI:Notify({
+				Title = "Hello",
+				Content = "Welcome to the WindUI Example!",
+				--Icon = "solar:bell-bold",
+				Duration = 5,
+				CanClose = false,
+			})
+		end,
+	})
+
+	ButtonTab:Space()
+
+	ButtonTab:Button({
+		Title = "Button",
+		Locked = true,
+		LockedTitle = "This element is locked",
+	})
+
+	ButtonTab:Button({
+		Title = "Button",
+		Desc = "Button example",
+		Locked = true,
+		LockedTitle = "This element is locked",
+	})
+end
+
+-- */  Input Tab  /* --
+do
+	local InputTab = ElementsSection:Tab({
+		Title = "Input",
+		Icon = "solar:password-minimalistic-input-bold",
+		IconColor = Purple,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	InputTab:Input({
+		Title = "Input",
+		Icon = "mouse",
+	})
+
+	InputTab:Space()
+
+	InputTab:Input({
+		Title = "Input Textarea",
+		Type = "Textarea",
+		Icon = "mouse",
+	})
+
+	InputTab:Space()
+
+	InputTab:Input({
+		Title = "Input Textarea",
+		Type = "Textarea",
+		--Icon = "mouse",
+	})
+
+	InputTab:Space()
+
+	InputTab:Input({
+		Title = "Input",
+		Desc = "Input example",
+	})
+
+	InputTab:Space()
+
+	InputTab:Input({
+		Title = "Input Textarea",
+		Desc = "Input example",
+		Type = "Textarea",
+	})
+
+	InputTab:Space()
+
+	InputTab:Input({
+		Title = "Input",
+		Locked = true,
+		LockedTitle = "This element is locked",
+	})
+
+	InputTab:Input({
+		Title = "Input",
+		Desc = "Input example",
+		Locked = true,
+		LockedTitle = "This element is locked",
+	})
+end
+
+-- */  Slider Tab  /* --
+do
+	local SliderTab = ElementsSection:Tab({
+		Title = "Slider",
+		Icon = "solar:square-transfer-horizontal-bold",
+		IconColor = Green,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	SliderTab:Section({
+		Title = "Default Slider with Tooltip and without textbox",
+		TextSize = 14,
+	})
+
+	SliderTab:Slider({
+		Title = "Slider Example",
+		Desc = "Hahahahaha hello",
+		IsTooltip = true,
+		IsTextbox = false,
+		Width = 200,
+		Step = 1,
+		Value = {
+			Min = 0,
+			Max = 200,
+			Default = 100,
+		},
+		Callback = function(value)
+			print(value)
+		end,
+	})
+
+	SliderTab:Space()
+
+	SliderTab:Section({
+		Title = "Slider without description",
+		TextSize = 14,
+	})
+
+	SliderTab:Slider({
+		Title = "Slider Example",
+		Step = 1,
+		Width = 200,
+		Value = {
+			Min = 0,
+			Max = 200,
+			Default = 100,
+		},
+		Callback = function(value)
+			print(value)
+		end,
+	})
+
+	SliderTab:Space()
+
+	SliderTab:Section({
+		Title = "Slider without titles",
+		TextSize = 14,
+	})
+
+	SliderTab:Slider({
+		IsTooltip = true,
+		Step = 1,
+		Value = {
+			Min = 0,
+			Max = 200,
+			Default = 100,
+		},
+		Callback = function(value)
+			print(value)
+		end,
+	})
+
+	SliderTab:Space()
+
+	SliderTab:Section({
+		Title = "Slider with icons ('from' only)",
+		TextSize = 14,
+	})
+
+	SliderTab:Slider({
+		IsTooltip = true,
+		Step = 1,
+		Value = {
+			Min = 0,
+			Max = 200,
+			Default = 100,
+		},
+		Icons = {
+			From = "sfsymbols:sunMinFill",
+			--To = "sfsymbols:sunMaxFill",
+		},
+		Callback = function(value)
+			print(value)
+		end,
+	})
+
+	SliderTab:Space()
+
+	SliderTab:Section({
+		Title = "Slider with icons (from & to)",
+		TextSize = 14,
+	})
+
+	SliderTab:Slider({
+		IsTooltip = true,
+		Step = 1,
+		Value = {
+			Min = 0,
+			Max = 100,
+			Default = 50,
+		},
+		Icons = {
+			From = "sfsymbols:sunMinFill",
+			To = "sfsymbols:sunMaxFill",
+		},
+		Callback = function(value)
+			print(value)
+		end,
+	})
+end
+
+-- */  Dropdown Tab  /* --
+do
+	local DropdownTab = ElementsSection:Tab({
+		Title = "Dropdown",
+		Icon = "solar:hamburger-menu-bold",
+		IconColor = Yellow,
+		IconShape = "Square",
+		Border = true,
+	})
+
+	DropdownTab:Dropdown({
+		Title = "Advanced Dropdown (example)",
+		Values = {
+			{
+				Title = "New file",
+				Desc = "Create a new file",
+				Icon = "file-plus",
+				Callback = function()
+					print("Clicked 'New File'")
+				end,
+			},
+			{
+				Title = "Copy link",
+				Desc = "Copy the file link",
+				Icon = "copy",
+				Callback = function()
+					print("Clicked 'Copy link'")
+				end,
+			},
+			{
+				Title = "Edit file",
+				Desc = "Allows you to edit the file",
+				Icon = "file-pen",
+				Callback = function()
+					print("Clicked 'Edit file'")
+				end,
+			},
+			{
+				Type = "Divider",
+			},
+			{
+				Title = "Delete file",
+				Desc = "Permanently delete the file",
+				Icon = "trash",
+				Callback = function()
+					print("Clicked 'Delete file'")
+				end,
+			},
+		},
+	})
+
+	DropdownTab:Space()
+
+	DropdownTab:Dropdown({
+		Title = "Multi Dropdown",
+		Values = {
+			"Привет",
+			"Hello",
+			"Сәлем",
+			"Bonjour",
+		},
+		Value = nil,
+		AllowNone = true,
+		Multi = true,
+		Callback = function(selectedValue)
+			print("Selected: " .. selectedValue)
+		end,
+	})
+
+	DropdownTab:Space()
+
+	DropdownTab:Dropdown({
+		Title = "No Multi Dropdown (default",
+		Values = {
+			"Привет",
+			"Hello",
+			"Сәлем",
+			"Bonjour",
+		},
+		Value = 1,
+		--AllowNone = true,
+		Callback = function(selectedValue)
+			print("Selected: " .. selectedValue)
+		end,
+	})
+
+	DropdownTab:Space()
+end
+
+-- */  Config Usage  /* --
+if not RunService:IsStudio() and writefile and printidentity() then
+	do -- config elements
+		local ConfigElementsTab = ConfigUsageSection:Tab({
+			Title = "Config Elements",
+			Icon = "solar:file-text-bold",
+			IconColor = Blue,
+			IconShape = nil,
+			Border = true,
+		})
+
+		-- All elements are taken from the official documentation: https://footagesus.github.io/WindUI-Docs/docs
+
+		-- Saving elements to the config using `Flag`
+
+		ConfigElementsTab:Colorpicker({
+			Flag = "ColorpickerTest",
+			Title = "Colorpicker",
+			Desc = "Colorpicker Description",
+			Default = Color3.fromRGB(0, 255, 0),
+			Transparency = 0,
+			Locked = false,
+			Callback = function(color)
+				print("Background color: " .. tostring(color))
+			end,
+		})
+
+		ConfigElementsTab:Space()
+
+		ConfigElementsTab:Dropdown({
+			Flag = "DropdownTest",
+			Title = "Advanced Dropdown",
+			Values = {
+				{
+					Title = "Category A",
+					Icon = "bird",
+				},
+				{
+					Title = "Category B",
+					Icon = "house",
+				},
+				{
+					Title = "Category C",
+					Icon = "droplet",
+				},
+			},
+			Value = "Category A",
+			Callback = function(option)
+				print("Category selected: " .. option.Title .. " with icon " .. option.Icon)
+			end,
+		})
+		ConfigElementsTab:Dropdown({
+			Flag = "DropdownTest2",
+			Title = "Advanced Dropdown 2",
+			Values = {
+				{
+					Title = "Category A",
+					Icon = "bird",
+				},
+				{
+					Title = "Category B",
+					Icon = "house",
+				},
+				{
+					Title = "Category C",
+					Icon = "droplet",
+					Locked = true,
+				},
+			},
+			Value = "Category A",
+			Multi = true,
+			Callback = function(options)
+				local titles = {}
+				for _, v in ipairs(options) do
+					table.insert(titles, v.Title)
+				end
+				print("Selected: " .. table.concat(titles, ", "))
+			end,
+		})
+
+		ConfigElementsTab:Space()
+
+		ConfigElementsTab:Input({
+			Flag = "InputTest",
+			Title = "Input",
+			Desc = "Input Description",
+			Value = "Default value",
+			InputIcon = "bird",
+			Type = "Input", -- or "Textarea"
+			Placeholder = "Enter text...",
+			Callback = function(input)
+				print("Text entered: " .. input)
+			end,
+		})
+
+		ConfigElementsTab:Space()
+
+		ConfigElementsTab:Keybind({
+			Flag = "KeybindTest",
+			Title = "Keybind",
+			Desc = "Keybind to open ui",
+			Value = "G",
+			Callback = function(v)
+				Window:SetToggleKey(Enum.KeyCode[v])
+			end,
+		})
+
+		ConfigElementsTab:Space()
+
+		ConfigElementsTab:Slider({
+			Flag = "SliderTest",
+			Title = "Slider",
+			Step = 1,
+			Value = {
+				Min = 20,
+				Max = 120,
+				Default = 70,
+			},
+			Callback = function(value)
+				print(value)
+			end,
+		})
+		ConfigElementsTab:Slider({
+			Flag = "SliderTest2",
+			--Title = "Slider",
+			Icons = {
+				From = "sfsymbols:sunMinFill",
+				To = "sfsymbols:sunMaxFill",
+			},
+			Step = 1,
+			IsTooltip = true,
+			Value = {
+				Min = 0,
+				Max = 100,
+				Default = 50,
+			},
+			Callback = function(value)
+				print(value)
+			end,
+		})
+
+		ConfigElementsTab:Space()
+
+		ConfigElementsTab:Toggle({
+			Flag = "ToggleTest",
+			Title = "Toggle Panel Background",
+			--Desc = "Toggle Description",
+			--Icon = "house",
+			--Type = "Checkbox",
+			Value = not Window.HidePanelBackground,
+			Callback = function(state)
+				Window:SetPanelBackground(state)
+			end,
+		})
+
+		ConfigElementsTab:Toggle({
+			Flag = "ToggleTest",
+			Title = "Toggle",
+			Desc = "Toggle Description",
+			--Icon = "house",
+			--Type = "Checkbox",
+			Value = false,
+			Callback = function(state)
+				print("Toggle Activated" .. tostring(state))
+			end,
+		})
+	end
+
+	do -- config panel
+		local ConfigTab = ConfigUsageSection:Tab({
+			Title = "Config Usage",
+			Icon = "solar:folder-with-files-bold",
+			IconColor = Purple,
+			IconShape = nil,
+			Border = true,
+		})
+
+		local ConfigManager = Window.ConfigManager
+		local ConfigName = "default"
+
+		local ConfigNameInput = ConfigTab:Input({
+			Title = "Config Name",
+			Icon = "file-cog",
+			Callback = function(value)
+				ConfigName = value
+			end,
+		})
+
+		ConfigTab:Space()
+
+		-- local AutoLoadToggle = ConfigTab:Toggle({
+		--     Title = "Enable Auto Load to Selected Config",
+		--     Value = false,
+		--     Callback = function(v)
+		--         Window.CurrentConfig:SetAutoLoad(v)
+		--     end
+		-- })
+
+		-- ConfigTab:Space()
+
+		local AllConfigs = ConfigManager:AllConfigs()
+		local DefaultValue = table.find(AllConfigs, ConfigName) and ConfigName or nil
+
+		local AllConfigsDropdown = ConfigTab:Dropdown({
+			Title = "All Configs",
+			Desc = "Select existing configs",
+			Values = AllConfigs,
+			Value = DefaultValue,
+			Callback = function(value)
+				ConfigName = value
+				ConfigNameInput:Set(value)
+
+				--AutoLoadToggle:Set(ConfigManager:GetConfig(ConfigName).AutoLoad or false)
+			end,
+		})
+
+		ConfigTab:Space()
+
+		ConfigTab:Button({
+			Title = "Save Config",
+			Icon = "",
+			Justify = "Center",
+			Callback = function()
+				Window.CurrentConfig = ConfigManager:Config(ConfigName)
+				if Window.CurrentConfig:Save() then
+					WindUI:Notify({
+						Title = "Config Saved",
+						Desc = "Config '" .. ConfigName .. "' saved",
+						Icon = "check",
+					})
+				end
+
+				AllConfigsDropdown:Refresh(ConfigManager:AllConfigs())
+			end,
+		})
+
+		ConfigTab:Space()
+
+		ConfigTab:Button({
+			Title = "Load Config",
+			Icon = "",
+			Justify = "Center",
+			Callback = function()
+				Window.CurrentConfig = ConfigManager:CreateConfig(ConfigName)
+				if Window.CurrentConfig:Load() then
+					WindUI:Notify({
+						Title = "Config Loaded",
+						Desc = "Config '" .. ConfigName .. "' loaded",
+						Icon = "refresh-cw",
+					})
+				end
+			end,
+		})
+
+		ConfigTab:Space()
+
+		ConfigTab:Button({
+			Title = "Print AutoLoad Configs",
+			Icon = "",
+			Justify = "Center",
+			Callback = function()
+				print(HttpService:JSONDecode(ConfigManager:GetAutoLoadConfigs()))
+			end,
+		})
+	end
+end
+
+-- */  Other  /* --
+do
+	local InviteCode = "ftgs-development-hub-1300692552005189632"
+	local DiscordAPI = "https://discord.com/api/v10/invites/" .. InviteCode .. "?with_counts=true&with_expiration=true"
+
+	local Response = WindUI.cloneref(game:GetService("HttpService"))
+		:JSONDecode(WindUI.Creator.Request and WindUI.Creator.Request({
+			Url = DiscordAPI,
+			Method = "GET",
+			Headers = {
+				["User-Agent"] = "WindUI/Example",
+				["Accept"] = "application/json",
+			},
+		}).Body or "{}")
+
+	local DiscordTab = OtherSection:Tab({
+		Title = "Discord",
+		Border = true,
+	})
+
+	if Response and Response.guild then
+		DiscordTab:Section({
+			Title = "Join our Discord server!",
+			TextSize = 20,
+		})
+		local DiscordServerParagraph = DiscordTab:Paragraph({
+			Title = tostring(Response.guild.name),
+			Desc = tostring(Response.guild.description),
+			Image = "https://cdn.discordapp.com/icons/"
+				.. Response.guild.id
+				.. "/"
+				.. Response.guild.icon
+				.. ".png?size=1024",
+			Thumbnail = "https://cdn.discordapp.com/banners/1300692552005189632/35981388401406a4b7dffd6f447a64c4.png?size=512",
+			ImageSize = 48,
+			Buttons = {
+				{
+					Title = "Copy link",
+					Icon = "link",
+					Callback = function()
+						setclipboard("https://discord.gg/" .. InviteCode)
+					end,
+				},
+			},
+		})
+	elseif RunService:IsStudio() or not writefile then
+		DiscordTab:Paragraph({
+			Title = "Discord API is not available in Studio mode.",
+			TextSize = 20,
+			Justify = "Center",
+			Image = "solar:info-circle-bold",
+			Color = "Red",
+			Buttons = {
+				{
+					Title = "Get/Copy Invite Link",
+					Icon = "link",
+					Callback = function()
+						if setclipboard then
+							setclipboard("https://discord.gg/" .. InviteCode)
+						else
+							WindUI:Notify({
+								Title = "Discord Invite Link",
+								Content = "https://discord.gg/" .. InviteCode,
+							})
+						end
+					end,
+				},
+			},
+		})
+	else
+		DiscordTab:Paragraph({
+			Title = "Failed to fetch Discord server info.",
+			TextSize = 20,
+			Justify = "Center",
+			Image = "solar:info-circle-bold",
+			Color = "Red",
+		})
+	end
+end
+
+local Tabs = {
+	ExampleTab = Window:Tab({
+		Title = "Example Tab",
+		Icon = "bird",
+	}),
+}
+
+local dropdownA
+
+local LargeListA = {
+	"All",
+	"Item A2",
+	"Item A3",
+	"Item A4",
+	"Item A5",
+	"Item A6",
+	"Item A7",
+	"Item A8",
+	"Item A9",
+	"Item A10",
+	"Item A11",
+	"Item A12",
+	"Item A13",
+	"Item A14",
+	"Item A15",
+	"Item A16",
+	"Item A17",
+	"Item A18",
+	"Item A19",
+	"Item A20",
+	"Item A21",
+	"Item A22",
+	"Item A23",
+	"Item A24",
+	"Item A25",
+	"Item A26",
+	"Item A27",
+	"Item A28",
+	"Item A29",
+	"Item A30",
+	"Item A31",
+	"Item A32",
+	"Item A33",
+	"Item A34",
+	"Item A35",
+	"Item A36",
+	"Item A37",
+	"Item A38",
+	"Item A39",
+	"Item A40",
+	"Item A41",
+	"Item A42",
+	"Item A43",
+	"Item A44",
+	"Item A45",
+	"Item A46",
+	"Item A47",
+	"Item A48",
+	"Item A49",
+	"Item A50",
+	"Item A51",
+	"Item A52",
+	"Item A53",
+	"Item A54",
+	"Item A55",
+	"Item A56",
+	"Item A57",
+	"Item A58",
+	"Item A59",
+	"Item A60",
+	"Item A61",
+	"Item A62",
+	"Item A63",
+	"Item A64",
+	"Item A65",
+	"Item A66",
+	"Item A67",
+	"Item A68",
+	"Item A69",
+	"Item A70",
+	"Item A71",
+	"Item A72",
+	"Item A73",
+	"Item A74",
+	"Item A75",
+	"Item A76",
+	"Item A77",
+	"Item A78",
+	"Item A79",
+	"Item A80",
+	"Item A81",
+	"Item A82",
+	"Item A83",
+	"Item A84",
+	"Item A85",
+	"Item A86",
+	"Item A87",
+	"Item A88",
+	"Item A89",
+	"Item A90",
+	"Item A91",
+	"Item A92",
+	"Item A93",
+	"Item A94",
+	"Item A95",
+	"Item A96",
+	"Item A97",
+	"Item A98",
+	"Item A99",
+	"Item A100",
+}
+
+local LargeListB = {
+	"Data B1",
+	"Data B2",
+	"Data B3",
+	"Data B4",
+	"Data B5",
+	"Data B6",
+	"Data B7",
+	"Data B8",
+	"Data B9",
+	"Data B10",
+}
+
+Tabs.ExampleTab:Dropdown({
+	Title = "Main Category",
+	Values = { "All", "Other Option" },
+	Value = "All",
+	Callback = function(option)
+		if dropdownA then
+			task.spawn(function()
+				if option == "All" then
+					dropdownA:Refresh(LargeListA)
+				else
+					dropdownA:Refresh(LargeListB)
+				end
+
+				dropdownA:Select({ "All" })
+			end)
+		end
+	end,
+})
+
+dropdownA = Tabs.ExampleTab:Dropdown({
+	Title = "Target",
+	Values = LargeListA,
+	Multi = true,
+	Value = { "All" },
+	Callback = function(option) end,
+})
